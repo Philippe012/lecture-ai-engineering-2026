@@ -1,0 +1,19 @@
+model,question_id,question,run,status,seconds,input_tokens,output_tokens,tokens_per_second
+gemini-3.5-flash-lite,q1,What is LoRA? Answer in one sentence.,1,ok,1.169,11,36,30.8
+gemini-3.5-flash-lite,q1,What is LoRA? Answer in one sentence.,2,ok,0.787,11,41,52.1
+gemini-3.5-flash-lite,q1,What is LoRA? Answer in one sentence.,3,ok,0.894,11,47,52.6
+gemini-3.5-flash-lite,q2,What is LoRA?,1,ok,3.113,6,717,230.3
+gemini-3.5-flash-lite,q2,What is LoRA?,2,ok,3.073,6,641,208.6
+gemini-3.5-flash-lite,q2,What is LoRA?,3,ok,2.858,6,611,213.8
+gemini-3.5-flash-lite,q3,Explain step by step how a Transformer language model generates text.,1,ok,5.044,13,1284,254.6
+gemini-3.5-flash-lite,q3,Explain step by step how a Transformer language model generates text.,2,ok,5.092,13,1312,257.6
+gemini-3.5-flash-lite,q3,Explain step by step how a Transformer language model generates text.,3,ok,4.328,13,1120,258.8
+gemini-3.1-flash-lite,q1,What is LoRA? Answer in one sentence.,1,ok,1.465,11,46,31.4
+gemini-3.1-flash-lite,q1,What is LoRA? Answer in one sentence.,2,ok,1.059,11,46,43.4
+gemini-3.1-flash-lite,q1,What is LoRA? Answer in one sentence.,3,ok,8.729,11,45,5.2
+gemini-3.1-flash-lite,q2,What is LoRA?,1,ok,4.365,6,811,185.8
+gemini-3.1-flash-lite,q2,What is LoRA?,2,ok,3.974,6,852,214.4
+gemini-3.1-flash-lite,q2,What is LoRA?,3,ok,3.439,6,825,239.9
+gemini-3.1-flash-lite,q3,Explain step by step how a Transformer language model generates text.,1,ok,5.688,13,962,169.1
+gemini-3.1-flash-lite,q3,Explain step by step how a Transformer language model generates text.,2,ok,49.933,13,973,19.5
+gemini-3.1-flash-lite,q3,Explain step by step how a Transformer language model generates text.,3,ok,26.052,13,980,37.6
