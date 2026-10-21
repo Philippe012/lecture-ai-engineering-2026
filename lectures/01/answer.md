@@ -42,3 +42,29 @@
   - LLM の回答は実行ごとに揺れるので、確認せずに信用してはいけないと感じた。
   - 疑問：temperature を下げれば揺れや誤りは減るのか？（Google が temperature を非推奨にしたため、今回は試していない）
   - 繰り返し実験には上限が大きい `gemini-3.5-flash-lite` が向いている。
+
+  **Extra: gemini-3.8-flash (stronger model, ~5 requests/minute, 10–20/day)**
+3 questions × 2 runs, 13 s pause. (An earlier identical run was lost when the Codespace restarted, so this is my second run.)
+
+| Question | Status | Time (s) | Output tokens | Output tokens/s |
+|---|---|---|---|---|
+| q1 run 1 | ok | 6.59 | 49 | 7.4 |
+| q1 run 2 | 503 | 2.10 | - | - |
+| q2 run 1 | 503 | 4.20 | - | - |
+| q2 run 2 | ok | 18.89 | 790 | 41.8 |
+| q3 run 1 | 503 | 5.03 | - | - |
+| q3 run 2 | ok | 58.57 | 1116 | 19.1 |
+
+Total: 6 requests in 160.4 s, 3 ok, 3 failed with 503 (model overloaded), 0 rate-limit errors (429).
+
+- **Reliability:** 50% of requests failed with 503. This is server overload, not my rate limit
+  (I stayed at ~2.2 requests/minute, under the ~5/minute limit). The 503 errors returned fast (2–5 s).
+  In real use, the code needs automatic retry with backoff, or a fallback to a lighter model.
+- **Speed:** successful runs were 7–12x slower than gemini-3.5-flash-lite on the same questions
+  (q2: 18.9 s vs 3.0 s, q3: 58.6 s vs 4.8 s), at only 7–42 output tokens/s vs ~220–257.
+  Part of this may be hidden "thinking" time. My code records only `candidates_token_count`,
+  not `thoughts_token_count`, so the real number of generated tokens may be higher.
+  Recording thinking tokens is a next step.
+- **Quota:** these runs used 12 of the ~10–20 daily requests for this model. The stronger model
+  is only practical for a few targeted tests. For repeated experiments, gemini-3.5-flash-lite
+  was the clear winner: fastest, most stable, and no errors.
