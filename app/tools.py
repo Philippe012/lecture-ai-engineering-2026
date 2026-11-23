@@ -111,6 +111,34 @@ def browse_tree(node_id: str | None = None) -> str:
         return json.dumps({"error": str(e)}, ensure_ascii=False)
 
 
+def search_hybrid(query: str) -> str:
+    """第1〜3回の本講義資料を、意味の近さと語の一致の両方で探し、章が偏らないように本文を返す。
+
+    queryには質問文か、調べたい語を並べて指定する。「第3回」のように回を含めると、その回に絞る。
+    pagesは本文つきの根拠候補、moreは見出しだけの追加候補。moreのページはread_pageで本文を読める。
+    """
+    import sqlite3
+    from google.genai.errors import APIError
+    from app.retrieval import search_hybrid as search
+
+    try:
+        return json.dumps(search(query), ensure_ascii=False)
+    except (ValueError, OSError, sqlite3.Error) as e:
+        return json.dumps({"error": str(e)}, ensure_ascii=False)
+    except APIError as e:
+        return json.dumps({"error": api_error_message(e.code)}, ensure_ascii=False)
+
+
+def read_page(page_id: str) -> str:
+    """ページID（例: lec03-main-p040）を指定し、そのページの本文と引用情報を返す。"""
+    from app.retrieval import read_page as read
+
+    try:
+        return json.dumps(read(page_id), ensure_ascii=False)
+    except (ValueError, OSError) as e:
+        return json.dumps({"error": str(e)}, ensure_ascii=False)
+
+
 def search_graph(query: str) -> str:
     """資料を検索し、前後ページ・共通用語をたどって関連ページの本文と引用情報を返す。
 
