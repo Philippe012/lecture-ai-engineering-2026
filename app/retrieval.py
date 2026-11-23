@@ -6,7 +6,8 @@ import math
 import re
 import sqlite3
 from contextlib import contextmanager
-from collections import defaultdict, deque
+from collections import Counter, defaultdict, deque
+from functools import lru_cache
 from pathlib import Path
 
 from google import genai
@@ -18,6 +19,7 @@ from app.config import (
     EMBEDDING_DIMENSIONS, EMBEDDING_MAX_TOKENS, EMBEDDING_MODEL,
     RAG_DB, RAG_DOCUMENT_IDS, RAG_SOURCE, RAG_TOP_K, RAG_TREE, get_api_key,
     RAG_GRAPH, GRAPH_START_K, GRAPH_HOPS, GRAPH_MAX_RESULTS,
+    HYBRID_CANDIDATE_K, HYBRID_MAX_PAGES, HYBRID_PER_SECTION, HYBRID_MORE, HYBRID_RRF_K,
 )
 
 
@@ -124,8 +126,8 @@ def open_index(path: Path):
         db.close()
 
 
-def search(query: str) -> list[dict]:
-    """質問を埋め込み、近いページを最大RAG_TOP_K件返す。"""
+def search(query: str, top_k: int = RAG_TOP_K) -> list[dict]:
+    """質問を埋め込み、近いページを最大top_k件返す。"""
     if not isinstance(query, str) or not query.strip():
         raise ValueError("検索語が空です。")
     with open_index(RAG_DB) as db:
@@ -134,8 +136,145 @@ def search(query: str) -> list[dict]:
             SELECT page_id, document_id, lecture, document_title, section, title, page, content,
                    vec_distance_cosine(embedding, ?) AS distance
             FROM chunks ORDER BY distance, page_id LIMIT ?
-        """, (sqlite_vec.serialize_float32(vector), RAG_TOP_K))
+        """, (sqlite_vec.serialize_float32(vector), top_k))
         return [dict(row) for row in rows]
+
+
+def tokenize(text: str) -> list[str]:
+    """英数字は単語、それ以外（日本語など）は2文字ずつに区切る。"""
+    text = text.casefold()
+    tokens = re.findall(r"[a-z0-9]+(?:[.\-][a-z0-9]+)*", text)
+    for run in re.findall(r"[^\x00-\x7f\s、。，．・：:；「」『』（）()【】［］\[\]／/！？!?〜~ー\-]+", text):
+        if len(run) == 1:
+            tokens.append(run)
+        else:
+            tokens.extend(run[i:i + 2] for i in range(len(run) - 1))
+    return tokens
+
+
+class LexicalIndex:
+    """ページ本文のBM25索引。埋め込みAPIを使わず、表記が一致する語で探す。"""
+
+    def __init__(self, pages: list[dict], k1: float = 1.2, b: float = 0.75):
+        self.pages = pages
+        self.k1, self.b = k1, b
+        self.docs = [Counter(tokenize(f"{p['title']}\n{p['content']}")) for p in pages]
+        self.lengths = [sum(doc.values()) for doc in self.docs]
+        self.average = sum(self.lengths) / max(len(self.docs), 1)
+        frequency = Counter(token for doc in self.docs for token in doc)
+        n = len(self.docs)
+        self.idf = {t: math.log(1 + (n - f + 0.5) / (f + 0.5)) for t, f in frequency.items()}
+
+    def search(self, query: str, top_k: int) -> list[tuple[dict, float]]:
+        query_tokens = set(tokenize(query))
+        scored = []
+        for page, doc, length in zip(self.pages, self.docs, self.lengths):
+            score = 0.0
+            for token in query_tokens:
+                tf = doc.get(token, 0)
+                if tf:
+                    norm = self.k1 * (1 - self.b + self.b * length / self.average)
+                    score += self.idf[token] * tf * (self.k1 + 1) / (tf + norm)
+            if score > 0:
+                scored.append((page, score))
+        scored.sort(key=lambda item: (-item[1], item[0]["page_id"]))
+        return scored[:top_k]
+
+
+@lru_cache(maxsize=1)
+def lexical_index() -> LexicalIndex:
+    return LexicalIndex(load_pages(RAG_SOURCE))
+
+
+@lru_cache(maxsize=1)
+def load_terms() -> tuple[dict, dict]:
+    """用語ノードと、ページIDごとの言及用語を返す。"""
+    graph = json.loads(RAG_GRAPH.read_text(encoding="utf-8"))
+    terms = {n["id"]: n for n in graph["nodes"] if n["kind"] == "term"}
+    mentions = defaultdict(set)
+    for edge in graph["edges"]:
+        if edge["relation"] == "mentions" and edge["target"] in terms:
+            mentions[edge["source"]].add(edge["target"])
+    return terms, mentions
+
+
+def query_lectures(query: str) -> set[int]:
+    """「第3回」「lecture 2」のような回の指定を取り出す。対象外の回は無視する。"""
+    available = {int(doc_id[3:5]) for doc_id in RAG_DOCUMENT_IDS}
+    found = {int(n) for n in re.findall(r"第\s*([0-9０-９]+)\s*回", query.translate(str.maketrans("０１２３４５６７８９", "0123456789")))}
+    found |= {int(n) for n in re.findall(r"(?:lecture|session|lec)\s*0?([0-9]+)", query, re.IGNORECASE)}
+    return found & available
+
+
+def query_terms(query: str) -> set[str]:
+    terms, _ = load_terms()
+    text = query.casefold()
+    return {tid for tid, node in terms.items()
+            if any(len(alias) >= 2 and alias.casefold() in text for alias in node["aliases"] + [node["title"]])}
+
+
+def first_sentence(text: str) -> str:
+    return re.split(r"(?<=[。！？])|\n", text.strip(), maxsplit=1)[0][:80]
+
+
+def search_hybrid(query: str, vector_hits: list[dict] | None = None) -> dict:
+    """ベクトル検索とBM25を順位で統合し、章ごとに偏らないよう本文を選び、残りは見出しで返す。"""
+    if not isinstance(query, str) or not query.strip():
+        raise ValueError("検索語が空です。")
+    pages = {p["page_id"]: p for p in load_pages(RAG_SOURCE)}
+    if vector_hits is None:
+        vector_hits = search(query, HYBRID_CANDIDATE_K)
+    lexical_hits = lexical_index().search(query, HYBRID_CANDIDATE_K)
+    lectures = query_lectures(query)
+    anchors = query_terms(query)
+    _, mentions = load_terms()
+
+    scores, sources = defaultdict(float), defaultdict(list)
+    for rank, hit in enumerate(vector_hits, 1):
+        scores[hit["page_id"]] += 1 / (HYBRID_RRF_K + rank)
+        sources[hit["page_id"]].append(f"vector#{rank}")
+    for rank, (page, _) in enumerate(lexical_hits, 1):
+        scores[page["page_id"]] += 1 / (HYBRID_RRF_K + rank)
+        sources[page["page_id"]].append(f"bm25#{rank}")
+
+    for page_id in list(scores):
+        number = int(page_id.rsplit("-p", 1)[1])
+        prefix = page_id.rsplit("-p", 1)[0]
+        for neighbor in (f"{prefix}-p{number - 1:03d}", f"{prefix}-p{number + 1:03d}"):
+            if neighbor in pages and neighbor not in scores and anchors & mentions[neighbor]:
+                scores[neighbor] = scores[page_id] / 2
+                sources[neighbor].append(f"neighbor:{page_id}")
+
+    ranked = sorted((pid for pid in scores if pid in pages and (not lectures or pages[pid]["lecture"] in lectures)),
+                    key=lambda pid: (-scores[pid], pid))
+
+    selected, per_section = [], Counter()
+    for page_id in ranked:
+        key = (pages[page_id]["document_id"], pages[page_id]["section"])
+        if per_section[key] < HYBRID_PER_SECTION:
+            selected.append(page_id)
+            per_section[key] += 1
+        if len(selected) == HYBRID_MAX_PAGES:
+            break
+    for page_id in ranked:
+        if len(selected) == HYBRID_MAX_PAGES:
+            break
+        if page_id not in selected:
+            selected.append(page_id)
+
+    def cite(page_id: str) -> dict:
+        page = pages[page_id]
+        return {"page_id": page_id, "lecture": page["lecture"], "page": page["page"],
+                "path": f"{page['document_title']} > {page['section']} > {page['title']}",
+                "found_by": sources[page_id]}
+
+    rest = [pid for pid in ranked if pid not in selected][:HYBRID_MORE]
+    return {
+        "lectures": sorted(lectures),
+        "query_terms": sorted(anchors),
+        "pages": [{**cite(pid), "content": pages[pid]["content"]} for pid in selected],
+        "more": [{**cite(pid), "first_sentence": first_sentence(pages[pid]["content"])} for pid in rest],
+    }
 
 
 def search_graph(query: str) -> dict:
