@@ -1,0 +1,265 @@
+{
+  "summary": {
+    "in_glossary": "10/10",
+    "reworded": "8/8",
+    "not_in_glossary": "8/8",
+    "all": "26/26",
+    "seconds": 0.008
+  },
+  "rows": [
+    {
+      "group": "in_glossary",
+      "question": "lecNN-start タグの意味を教えてください",
+      "query": "lecNN-start タグ",
+      "top_term": "lecNN-start タグ",
+      "hits": [
+        "lecNN-start タグ"
+      ],
+      "ok": true
+    },
+    {
+      "group": "in_glossary",
+      "question": "宿題の3レベルって何のこと？",
+      "query": "宿題の3レベル",
+      "top_term": "宿題の3レベル",
+      "hits": [
+        "宿題の3レベル"
+      ],
+      "ok": true
+    },
+    {
+      "group": "in_glossary",
+      "question": "answer.mdの意味を教えてください",
+      "query": "answer.md",
+      "top_term": "answer.md",
+      "hits": [
+        "answer.md"
+      ],
+      "ok": true
+    },
+    {
+      "group": "in_glossary",
+      "question": "既定モデルって何のこと？",
+      "query": "既定モデル",
+      "top_term": "既定モデル",
+      "hits": [
+        "既定モデル"
+      ],
+      "ok": true
+    },
+    {
+      "group": "in_glossary",
+      "question": "LoRAの意味を教えてください",
+      "query": "LoRA",
+      "top_term": "LoRA",
+      "hits": [
+        "LoRA",
+        "ランク（LoRAのr）",
+        "QLoRA"
+      ],
+      "ok": true
+    },
+    {
+      "group": "in_glossary",
+      "question": "QLoRAって何のこと？",
+      "query": "QLoRA",
+      "top_term": "QLoRA",
+      "hits": [
+        "QLoRA",
+        "LoRA"
+      ],
+      "ok": true
+    },
+    {
+      "group": "in_glossary",
+      "question": "Codespaces secretの意味を教えてください",
+      "query": "Codespaces secret",
+      "top_term": "Codespaces secret",
+      "hits": [
+        "Codespaces secret",
+        "GitHub Codespaces",
+        "APIキー"
+      ],
+      "ok": true
+    },
+    {
+      "group": "in_glossary",
+      "question": "TestModelって何のこと？",
+      "query": "TestModel",
+      "top_term": "TestModel",
+      "hits": [
+        "TestModel"
+      ],
+      "ok": true
+    },
+    {
+      "group": "in_glossary",
+      "question": "ハーネスの意味を教えてください",
+      "query": "ハーネス",
+      "top_term": "ハーネス",
+      "hits": [
+        "ハーネス"
+      ],
+      "ok": true
+    },
+    {
+      "group": "in_glossary",
+      "question": "レート制限って何のこと？",
+      "query": "レート制限",
+      "top_term": "レート制限",
+      "hits": [
+        "レート制限",
+        "トークン",
+        "エージェントループ"
+      ],
+      "ok": true
+    },
+    {
+      "group": "reworded",
+      "question": "Low-Rank Adaptationはどんな手法？",
+      "query": "Low-Rank Adaptation",
+      "top_term": "LoRA",
+      "hits": [
+        "LoRA",
+        "ランク（LoRAのr）"
+      ],
+      "ok": true
+    },
+    {
+      "group": "reworded",
+      "question": "HITLってどういう意味？",
+      "query": "HITL",
+      "top_term": "Human-in-the-loop",
+      "hits": [
+        "Human-in-the-loop"
+      ],
+      "ok": true
+    },
+    {
+      "group": "reworded",
+      "question": "開始タグは何に使いますか？",
+      "query": "開始タグ",
+      "top_term": "lecNN-start タグ",
+      "hits": [
+        "lecNN-start タグ"
+      ],
+      "ok": true
+    },
+    {
+      "group": "reworded",
+      "question": "429エラーが出るのはなぜ？",
+      "query": "429エラー",
+      "top_term": "レート制限",
+      "hits": [
+        "レート制限"
+      ],
+      "ok": true
+    },
+    {
+      "group": "reworded",
+      "question": "LLM採点のメリットと注意点は？",
+      "query": "LLM採点",
+      "top_term": "LLM-as-a-Judge",
+      "hits": [
+        "LLM-as-a-Judge",
+        "LLM（大規模言語モデル）"
+      ],
+      "ok": true
+    },
+    {
+      "group": "reworded",
+      "question": "宿題レベルはいくつあって、何個やればいい？",
+      "query": "宿題レベル",
+      "top_term": "宿題の3レベル",
+      "hits": [
+        "宿題の3レベル"
+      ],
+      "ok": true
+    },
+    {
+      "group": "reworded",
+      "question": "温度パラメータを下げるとどうなる？",
+      "query": "温度パラメータ",
+      "top_term": "temperature",
+      "hits": [
+        "temperature"
+      ],
+      "ok": true
+    },
+    {
+      "group": "reworded",
+      "question": "指示文はユーザーの質問と何が違う？",
+      "query": "指示文",
+      "top_term": "システムプロンプト",
+      "hits": [
+        "システムプロンプト",
+        "ガードレール"
+      ],
+      "ok": true
+    },
+    {
+      "group": "not_in_glossary",
+      "question": "DPOとは何ですか？",
+      "query": "DPO",
+      "top_term": null,
+      "hits": [],
+      "ok": true
+    },
+    {
+      "group": "not_in_glossary",
+      "question": "Mixture of Expertsって何のこと？",
+      "query": "Mixture of Experts",
+      "top_term": null,
+      "hits": [],
+      "ok": true
+    },
+    {
+      "group": "not_in_glossary",
+      "question": "ビームサーチの意味を教えてください",
+      "query": "ビームサーチ",
+      "top_term": null,
+      "hits": [],
+      "ok": true
+    },
+    {
+      "group": "not_in_glossary",
+      "question": "RLHFとは何ですか？",
+      "query": "RLHF",
+      "top_term": null,
+      "hits": [],
+      "ok": true
+    },
+    {
+      "group": "not_in_glossary",
+      "question": "AIE2026の修了試験の日程は？",
+      "query": "修了試験",
+      "top_term": null,
+      "hits": [],
+      "ok": true
+    },
+    {
+      "group": "not_in_glossary",
+      "question": "lecNN-end タグとは何ですか？",
+      "query": "lecNN-end タグ",
+      "top_term": null,
+      "hits": [],
+      "ok": true
+    },
+    {
+      "group": "not_in_glossary",
+      "question": "宿題の4レベル目は何ですか？",
+      "query": "宿題の4レベル目",
+      "top_term": null,
+      "hits": [],
+      "ok": true
+    },
+    {
+      "group": "not_in_glossary",
+      "question": "第9回の講義テーマは何ですか？",
+      "query": "第9回の講義テーマ",
+      "top_term": null,
+      "hits": [],
+      "ok": true
+    }
+  ]
+}

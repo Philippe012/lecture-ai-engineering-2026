@@ -1,0 +1,34 @@
+{
+  "description": "第2回 宿題（発展）の評価セット。学習データ（「X」とは何ですか？／Xについて簡単に説明してください。）とは別の言い回しで作った。must_include は用語集の定義に含まれる語で、回答に全部含まれれば内容○。not_in_glossary の質問は、回答に refusal_markers のどれかがあれば○。query は用語集検索に渡す語。",
+  "refusal_markers": ["用語集", "載って", "わかりません", "分かりません", "不明", "確認が必要", "存在しません", "情報がありません"],
+  "items": [
+    {"group": "in_glossary", "term_id": "lec-start-tag", "question": "lecNN-start タグの意味を教えてください", "query": "lecNN-start タグ", "must_include": ["タグ", "ブランチ"]},
+    {"group": "in_glossary", "term_id": "homework-levels", "question": "宿題の3レベルって何のこと？", "query": "宿題の3レベル", "must_include": ["基礎", "発展"]},
+    {"group": "in_glossary", "term_id": "answer-md", "question": "answer.mdの意味を教えてください", "query": "answer.md", "must_include": ["提出", "PR"]},
+    {"group": "in_glossary", "term_id": "default-model", "question": "既定モデルって何のこと？", "query": "既定モデル", "must_include": ["gemini-3.5-flash-lite"]},
+    {"group": "in_glossary", "term_id": "lora", "question": "LoRAの意味を教えてください", "query": "LoRA", "must_include": ["固定", "小さな行列"]},
+    {"group": "in_glossary", "term_id": "qlora", "question": "QLoRAって何のこと？", "query": "QLoRA", "must_include": ["4ビット", "LoRA"]},
+    {"group": "in_glossary", "term_id": "codespaces-secret", "question": "Codespaces secretの意味を教えてください", "query": "Codespaces secret", "must_include": ["環境変数"]},
+    {"group": "in_glossary", "term_id": "test-model", "question": "TestModelって何のこと？", "query": "TestModel", "must_include": ["テスト", "API"]},
+    {"group": "in_glossary", "term_id": "harness", "question": "ハーネスの意味を教えてください", "query": "ハーネス", "must_include": ["ループ", "ツール"]},
+    {"group": "in_glossary", "term_id": "rate-limit", "question": "レート制限って何のこと？", "query": "レート制限", "must_include": ["上限", "429"]},
+
+    {"group": "reworded", "term_id": "lora", "question": "Low-Rank Adaptationはどんな手法？", "query": "Low-Rank Adaptation", "must_include": ["固定", "小さな行列"]},
+    {"group": "reworded", "term_id": "human-in-the-loop", "question": "HITLってどういう意味？", "query": "HITL", "must_include": ["人", "承認"]},
+    {"group": "reworded", "term_id": "lec-start-tag", "question": "開始タグは何に使いますか？", "query": "開始タグ", "must_include": ["タグ", "ブランチ"]},
+    {"group": "reworded", "term_id": "rate-limit", "question": "429エラーが出るのはなぜ？", "query": "429エラー", "must_include": ["上限"]},
+    {"group": "reworded", "term_id": "llm-as-a-judge", "question": "LLM採点のメリットと注意点は？", "query": "LLM採点", "must_include": ["速く", "癖"]},
+    {"group": "reworded", "term_id": "homework-levels", "question": "宿題レベルはいくつあって、何個やればいい？", "query": "宿題レベル", "must_include": ["3段階", "1つ"]},
+    {"group": "reworded", "term_id": "temperature", "question": "温度パラメータを下げるとどうなる？", "query": "温度パラメータ", "must_include": ["安定"]},
+    {"group": "reworded", "term_id": "system-prompt", "question": "指示文はユーザーの質問と何が違う？", "query": "指示文", "must_include": ["振る舞い"]},
+
+    {"group": "not_in_glossary", "term_id": null, "question": "DPOとは何ですか？", "query": "DPO", "must_include": []},
+    {"group": "not_in_glossary", "term_id": null, "question": "Mixture of Expertsって何のこと？", "query": "Mixture of Experts", "must_include": []},
+    {"group": "not_in_glossary", "term_id": null, "question": "ビームサーチの意味を教えてください", "query": "ビームサーチ", "must_include": []},
+    {"group": "not_in_glossary", "term_id": null, "question": "RLHFとは何ですか？", "query": "RLHF", "must_include": []},
+    {"group": "not_in_glossary", "term_id": null, "question": "AIE2026の修了試験の日程は？", "query": "修了試験", "must_include": []},
+    {"group": "not_in_glossary", "term_id": null, "question": "lecNN-end タグとは何ですか？", "query": "lecNN-end タグ", "must_include": []},
+    {"group": "not_in_glossary", "term_id": null, "question": "宿題の4レベル目は何ですか？", "query": "宿題の4レベル目", "must_include": []},
+    {"group": "not_in_glossary", "term_id": null, "question": "第9回の講義テーマは何ですか？", "query": "第9回の講義テーマ", "must_include": []}
+  ]
+}
